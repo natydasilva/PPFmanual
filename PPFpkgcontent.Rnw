@@ -49,21 +49,20 @@ Table \ref{tabfun} shows the complete list of functions included in the package 
 
  \begin{center}
  \begin{table}[!h]
-  \begin{tabular}{ l | l } \hline
-Function &Description \\ \hline
- baggtree&For each bootstrap sample grow a projection pursuit tree (PPtree object)\\ \\
- node\_data&Data structure with the  projected and boundary by node and class\\ \\
- PPclassify2&Predict class for a test dataset and calculate prediction error\\ \\
- PPforest&Runs a Projection pursuit random forest\\ \\
- permute\_importance&Obtain the permuted importance variable measure\\ \\
- PPtree\_split&Projection pursuit classification tree with random variable\\
- & selection in each split\\ \\
- ppf\_avg\_pptree\_imp& Computes a global importance measure for a PPforest object, average\\ \\
- ppf\_global\_imp& Computes a global importance measure for a PPforest object\\ \\
- print.PPforest& Print PPforest object\\ \\
- predict.PPforest&Predict class for the test set and calculate prediction error\\
- ternary\_str&Data structure with the  projected and boundary by node and class\\ \\
- tree\_pred&Obtain predicted class for new data using PPforest t.\\ \\
+  \begin{tabular}{ l | p{12cm} } \hline
+\textbf{Function} &\textbf{Description} \\ \hline
+ {\tt baggtree}&For each bootstrap sample grow a projection pursuit tree (PPtree object)\\ \\ \hline
+ {\tt node\_data} &Data structure with the  projected and boundary by node and class\\ \\ \hline
+ {\tt PPclassify2}&Predict class for a test dataset and calculate prediction error\\ \\ \hline
+ {\tt PPforest} &Runs a Projection pursuit random forest\\ \\ \hline
+ {\tt permute\_importance}&Obtain the permuted importance variable measure\\ \\ \hline
+ {\tt PPtree\_split}&Projection pursuit classification tree with random variable selection in each split\\ \\ \hline
+ {\tt ppf\_avg\_pptree\_imp}& Computes a global importance measure for a PPforest object, average\\ \\ \hline
+ {\tt ppf\_global\_imp}& Computes a global importance measure for a PPforest object\\ \\ \hline
+ {\tt print.PPforest}& Print PPforest object\\ \\ \hline
+ {\tt predict.PPforest}&Predict class for the test set and calculate prediction error\\ \\ \hline
+ {\tt ternary\_str}&Data structure with the  projected and boundary by node and class\\ \\ \hline
+ {\tt tree\_pred}&Obtain predicted class for new data using PPforest t.\\ \\ 
    \hline
   \end{tabular}
   \caption{Summary of functions implemented in \pkg{PPforest}\label{tabfun}}
@@ -122,28 +121,27 @@ PPforest package includes some data set that were used to test its predictive pe
 
 \begin{center}
 \begin{table}[!h]
-\begin{tabular}{ l | l } \hline
-Data & Description\\ \hline
-{\tt crab} & Measurements on rock crabs of the genus Leptograpsus \\
-{\tt fishcatch} & Measurements on fishes caught form Finland\\
-{\tt glass} & Measurements on 6 different types of class\\
-{\tt image} & Instances from 7 outoor images\\
-{\tt leukemia} & Gene expression data set in two types of acute leukemias\\
-{\tt lymphoma} & Gene expression in the three most prevalent adult lymphoid malignancies\\
-{\tt NCI60} & Gene expression data among the 60 cell lines\\
-{\tt parkinson} & Data set containing 195 observations from 2 parkinson types \\
-{\tt wine} & Data set containing observations from 3 wine grown cultivares in Italy\\ \hline
+\begin{tabular}{ l | p{12cm} } \hline
+\textbf{Data} & \textbf{Description}\\ \hline
+{\tt crab} & Measurements on rock crabs of the genus Leptograpsus \\ \\ \hline
+{\tt fishcatch} & Measurements on fishes caught form Finland\\ \\ \hline
+{\tt glass} & Measurements on 6 different types of class\\ \\ \hline
+{\tt image} & Instances from 7 outoor images\\ \\ \hline
+{\tt leukemia} & Gene expression data set in two types of acute leukemias\\ \\ \hline
+{\tt lymphoma} & Gene expression in the three most prevalent adult lymphoid malignancies\\ \\ \hline
+{\tt NCI60} & Gene expression data among the 60 cell lines\\ \\ \hline
+{\tt parkinson} & Data set containing 195 observations from 2 parkinson types \\ \\ \hline
+{\tt wine} & Data set containing observations from 3 wine grown cultivares in Italy\\  \\ \hline
   \end{tabular}
-  \caption{Summary of functions implemented in \pkg{PPforest}\label{tabfun}}
+  \caption{Summary of functions implemented in \pkg{PPforest}\label{datappf}}
   \end{table}
 \end{center}
 
- The main function of the package is PPforest which implements a projection pursuit random forest. Table \ref{ppforestfun} presents the PPforest function arguments and their respective description.
- 
+ The main function of the package is called PPforest which implements a projection pursuit random forest. Table \ref{ppforestfun} presents the PPforest function arguments and their respective description.
   \begin{center}
  \begin{table}[!h]
-  \begin{tabular}{ l | l } \hline
-  Arguments & Description\\ \hline
+  \begin{tabular}{ l | p{12cm} } \hline
+  \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt data}	& Data frame with the complete data set\\ \hline
 {\tt class}	& A character with the name of the class variable.\\ \hline
 {\tt std} & if TRUE standardize the data set, needed to compute global importance measure\\ \hline
@@ -165,12 +163,34 @@ logical condition, if it is TRUE then parallelize the function\\ \hline
   \end{table}
   \end{center}
   
+\textbf{PPforest} function runs a projection pursuit random forest.  The arguments are a data frame with the data information, class with the name of the class variable argument.  {\tt size.tr} to specify the proportion of observations using in the training. Using this function we have the option to split the data in training and test using {\tt size.tr} directly. {\tt size.tr} is the proportion of data used in the training and the test proportion will be 1- {\tt size.tr}.
+The number of trees in the forest is specified using the argument {\tt m}. The argument {\tt size.p} is the sample proportion of the variables used in each node split, PPmethod is the projection pursuit index to be optimized,  two options LDA and PDA are available.
 
-  
 <<echo=TRUE,tidy=TRUE>>=
-Tree.crab <- PPforest::PPtree_split("Type~.", data = crab, PPmethod = "LDA", size.p = 0.6)
-Tree.crab
+set.seed(146)
+pprf.crab <- PPforest::PPforest(data = crab, class = "Type", size.tr = 1, m = 200,
+                                size.p =  .5,  PPmethod = 'LDA',  parallel =TRUE, cores = 2)
+
+pprf.crab
 @
+
+\textbf{PPforest} print a summary result from the model with the confusion matrix information and the oob-error rate in a similar way randomForest packages does.
+
+This function returns the predicted values of the training data, training error, test error and predicted test values. Also there is the information about out of bag error for the forest and also for each tree in the forest. Bootstrap samples, output of all the trees in the forest from , proximity matrix and vote matrix, number of trees grown in the forest, number of predictor variables selected to use for splitting at each node. Confusion matrix of the prediction (based on OOb data), the training data and test data and vote matrix are also returned.
+
+The printed version of a `PPforest` object follows the `randomForest` printed version to make them comparable. Based on confusion matrix, we can observe that the biggest error is for BlueMale class. Most of the wrong classified values are between BlueFemale and BlueMale.
+<<echo=TRUE,tidy=TRUE>>=
+ str(pprf.crab,max.level=1 )
+@
+
+
+%   
+% <<echo=TRUE,tidy=TRUE>>=
+% Tree.crab <- PPforest::PPtree_split("Type~.", data = crab, PPmethod = "LDA", size.p = 0.6)
+% Tree.crab
+% @
+%   
+  
   
   
 %   
@@ -191,26 +211,7 @@ Tree.crab
 %  #selecting first PPtree object,
 %  crab.trees[[1]][[1]]
 % @
-% 
-% \textbf{PPforest} function runs a projection pursuit random forest.  The arguments are a data frame with the data information, class with the name of the class variable argument.  size.tr to specify the proportion of observations using in the training. Using this function we have the option to split the data in training and test using \textbf{size.tr} directly. size.tr is the proportion of data used in the training and the test proportion will be 1- size.tr.
-% The number of trees in the forest is specified using the argument m. The argument size.p is the sample proportion of the variables used in each node split, PPmethod is the projection pursuit index to be optimized,  two options LDA and PDA are available.
-% 
-% <<>>=
-% set.seed(146)
-% pprf.crab <- PPforest::PPforest(data = crab, class = "Type", size.tr = 1, m = 200,
-%                                 size.p =  .5,  PPmethod = 'LDA',  parallel =TRUE, cores = 2)
-% 
-% pprf.crab
-% @
-% 
-% \textbf{PPforest} print a summary result from the model with the confusion matrix information and the oob-error rate in a similar way randomForest packages does.
-% 
-% This function returns the predicted values of the training data, training error, test error and predicted test values. Also there is the information about out of bag error for the forest and also for each tree in the forest. Bootstrap samples, output of all the trees in the forest from , proximity matrix and vote matrix, number of trees grown in the forest, number of predictor variables selected to use for splitting at each node. Confusion matrix of the prediction (based on OOb data), the training data and test data and vote matrix are also returned.
-% 
-% The printed version of a `PPforest` object follows the `randomForest` printed version to make them comparable. Based on confusion matrix, we can observe that the biggest error is for BlueMale class. Most of the wrong classified values are between BlueFemale and BlueMale.
-% <<>>=
-%  str(pprf.crab,max.level=1 )
-% @
+
 % 
 % The PPforest algorithm calculates variable importance in two ways: (1) permuted importance using accuracy,  and (2) importance based on projection coefficients on standardized variables.
 % 
