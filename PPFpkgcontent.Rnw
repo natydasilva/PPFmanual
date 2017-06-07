@@ -31,9 +31,7 @@ In this user manual, the key functions included in the package are presented and
 % \end{enumerate}
 \section{Package description and illustrative examples}
 In this section, a detailed description of \pkg{PPforest} package along with examples is presented. To get detailed information about PPforest method check \cite{dasilvappforest}
-
 \pkg{PPforest} package implements a classification random forest using projection pursuit classification trees.
-
 Table \ref{tabfun} shows the complete list of functions included in the package along with a brief description. 
 %A summary of the main functions in \pkg{PPforest} is presented.
 % 
@@ -45,8 +43,6 @@ Table \ref{tabfun} shows the complete list of functions included in the package 
 % \item Importance variable measures.
 % \item Data structure to plot generalized ternary plots using vote matrix information.
 % \end{itemize}
-
-
  \begin{center}
  \begin{table}[!h]
   \begin{tabular}{ l | p{12cm} } \hline
@@ -68,15 +64,12 @@ Table \ref{tabfun} shows the complete list of functions included in the package 
   \caption{Summary of functions implemented in \pkg{PPforest}\label{tabfun}}
   \end{table}
 \end{center}
-
-
 The developed version for the package is available on GitHub and will be soon on CRAN. To install \pkg{PPforest} you should run the following code:
 <<echo = TRUE, message=FALSE, warning=FALSE,eval=FALSE>>=
 library(devtools)
 install_github("natydasilva/PPforest")
 library(PPforest)
 @
-
 Australian crab data set will be used as example across this manual. This data contains measurements on rock crabs of the genus Leptograpsus. There are 200 observations from two species (blue and orange) and for each specie (50 in each one) there are 50 males and 50 females. Class variable has 4 classes with the combinations of specie and sex (BlueMale, BlueFemale, OrangeMale and OrangeFemale). The data were collected on site at Fremantle, Western Australia. For each specimen, five measurements were made, using vernier calipers.
 
 \begin{itemize}
@@ -99,8 +92,6 @@ require(plotly)
 require(dplyr)
 library(ggplot2)
 @
-
-
 \begin{figure}[!h]
 <<fig.show='hold', fig.width = 5, fig.height = 5, echo=FALSE>>=
 
@@ -116,9 +107,7 @@ a
 @
 \caption{Scatter plot matrix for carb data \label{scatercrab}}
 \end{figure}
-
-PPforest package includes some data set that were used to test its predictive performance. The data sets included are summarized in Table \ref{datappf}.
-
+\pkg{PPforest} includes some data set that were used to test its predictive performance. The data sets included are summarized in Table \ref{datappf}.
 \begin{center}
 \begin{table}[!h]
 \begin{tabular}{ l | p{12cm} } \hline
@@ -136,8 +125,7 @@ PPforest package includes some data set that were used to test its predictive pe
   \caption{Summary of functions implemented in \pkg{PPforest}\label{datappf}}
   \end{table}
 \end{center}
-
- The main function of the package is called PPforest which implements a projection pursuit random forest. Table \ref{ppforestfun} presents the PPforest function arguments and their respective description.
+The main function of the package is called {\tt PPforest} which implements a projection pursuit random forest. Table \ref{ppforestfun} presents the {\tt PPforest} function arguments and their respective description.
   \begin{center}
  \begin{table}[!h]
   \begin{tabular}{ l | p{12cm} } \hline
@@ -159,26 +147,51 @@ PPforest package includes some data set that were used to test its predictive pe
 logical condition, if it is TRUE then parallelize the function\\ \hline
  {\tt cores} &number of cores used in the parallelization\\ \hline
   \end{tabular}
-  \caption{Summary of available arguments and value returned by the function PPforest \label{ppforestfun}}
+  \caption{Summary of available arguments of function {\tt PPforest} \label{ppforestfun}}
   \end{table}
   \end{center}
   
-\textbf{PPforest} function runs a projection pursuit random forest.  The arguments are a data frame with the data information, class with the name of the class variable argument.  {\tt size.tr} to specify the proportion of observations using in the training. Using this function we have the option to split the data in training and test using {\tt size.tr} directly. {\tt size.tr} is the proportion of data used in the training and the test proportion will be 1- {\tt size.tr}.
+{\tt PPforest} function runs a projection pursuit random forest.  The arguments are a data frame with the data information, class with the name of the class variable argument.  {\tt size.tr} to specify the proportion of observations using in the training. Using this function we have the option to split the data in training and test using {\tt size.tr} directly. {\tt size.tr} is the proportion of data used in the training and the test proportion will be 1- {\tt size.tr}.
 The number of trees in the forest is specified using the argument {\tt m}. The argument {\tt size.p} is the sample proportion of the variables used in each node split, PPmethod is the projection pursuit index to be optimized,  two options LDA and PDA are available.
 
-<<echo=TRUE,tidy=TRUE>>=
+<<tidy=TRUE>>=
 set.seed(146)
-pprf.crab <- PPforest::PPforest(data = crab, class = "Type", size.tr = 1, m = 200,
-                                size.p =  .5,  PPmethod = 'LDA',  parallel =TRUE, cores = 2)
-
-pprf.crab
+pprf.crab <- PPforest::PPforest(data = crab, class = "Type", size.tr = 1, 
+                                m = 200, size.p =  .5,  PPmethod = 'LDA',  
+                                parallel =TRUE, cores = 2)
 @
 
-\textbf{PPforest} print a summary result from the model with the confusion matrix information and the oob-error rate in a similar way randomForest packages does.
+{\tt PPforest} print a summary result from the model with the confusion matrix information and the oob-error rate in a similar way \pkg{randomForest} packages does to make them comparable. Based on confusion matrix, we can observe that the biggest error is for BlueMale class. Most of the wrong classified values are between BlueFemale and BlueMale.
 
+<<tidy=TRUE>>=
+pprf.crab
+@
 This function returns the predicted values of the training data, training error, test error and predicted test values. Also there is the information about out of bag error for the forest and also for each tree in the forest. Bootstrap samples, output of all the trees in the forest from , proximity matrix and vote matrix, number of trees grown in the forest, number of predictor variables selected to use for splitting at each node. Confusion matrix of the prediction (based on OOb data), the training data and test data and vote matrix are also returned.
+  \begin{center}
+ \begin{table}[!h]
+  \begin{tabular}{ l | p{12cm} } \hline
+  \textbf{Value} & \textbf{Description}\\ \hline
+{\tt prediction.training}	& predicted values for training data se\\  \hline
+{\tt training.error}	&error of the training data set.\\  \hline
+{\tt prediction.test} & predicted values for the test data set if testap = TRUE(default\\ \hline
+{\tt oob.error.forest} & out of bag error in the forest\\  \hline
+ {\tt oob.error.tree}&out of bag error for each tree in the forest\\ \hline
+{\tt boot.samp} & information of bootrap samples.\\ \hline
+{\tt output.trees} & output from a {\tt trees\_pp} for each bootrap sample\\  \hline
+ {\tt proximity}& Proximity matrix, if two cases are classified in the same terminal node then the proximity matrix is increased by one in PPforest there are one terminal node per class\\  \hline
 
-The printed version of a `PPforest` object follows the `randomForest` printed version to make them comparable. Based on confusion matrix, we can observe that the biggest error is for BlueMale class. Most of the wrong classified values are between BlueFemale and BlueMale.
+ {\tt votes} & a matrix with one row for each input data point and one column for each class, giving the fraction of (OOB) votes from the PPforest\\  \hline
+ {\tt n.tree} &number of trees grown in PPforest\\  \hline
+ {\tt n.var} &number of predictor variables selected to use for spliting at each node\\  \hline
+ {\tt type} &classification\\  \hline
+ {\tt confusion} &confusion matrix of the prediction (based on OOb data)\\  \hline
+ {\tt call} & the original call to PPforest. \\  \hline
+ {\tt train}& is the training data based on size.tr sample proportion\\  \hline
+ {\tt test}& is the test data based on $1-${\tt size.tr} sample proportion\\  \hline
+  \end{tabular}
+  \caption{Summary of available values of function {\tt PPforest} \label{ppforestout}}
+  \end{table}
+  \end{center}
 <<echo=TRUE,tidy=TRUE>>=
  str(pprf.crab,max.level=1 )
 @
