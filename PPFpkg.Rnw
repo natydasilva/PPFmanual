@@ -34,7 +34,7 @@
 \rfoot{\thepage}
 \linespread{1.5}
 \title{PPforest: An \textbf{R} Package to Implement Projection Pursuit Classification Random Forest}
-\author{Natalia da Silva, Dianne Cook \& Eun-Kyung Lee}
+
 
 \begin{document}
 \maketitle
