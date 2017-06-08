@@ -66,6 +66,7 @@ Table \ref{tabfun} shows the complete list of functions included in the package 
   \caption{Summary of functions implemented in \pkg{PPforest}\label{tabfun}}
   \end{table}
 \end{center}
+
 The developed version for the package is available on GitHub and will be soon on CRAN. To install \pkg{PPforest} you should run the following code:
 <<echo = TRUE, message=FALSE, warning=FALSE,eval=FALSE>>=
 library(devtools)
@@ -177,7 +178,7 @@ pprf.crab
 @
 This function returns the predicted values of the training data, training error, test error and predicted test values. Also there is the information about out of bag error for the forest and also for each tree in the forest. Bootstrap samples, output of all the trees in the forest from , proximity matrix and vote matrix, number of trees grown in the forest, number of predictor variables selected to use for splitting at each node. Confusion matrix of the prediction (based on OOb data), the training data and test data and vote matrix are also returned.
 
-<<echo=TRUE,tidy=TRUE>>=
+<<echo=TRUE>>=
  str(pprf.crab, max.level=1, list.len=5)
 @
 
@@ -207,6 +208,8 @@ This function returns the predicted values of the training data, training error,
   \end{table}
   \end{center}
 
+
+
 \newpage 
 
 \subsection{{\tt PPtree\_split}}
@@ -227,12 +230,12 @@ A summary of available arguments and its descriprion is presented in Table \ref{
   \end{table}
   \end{center}
 To run one tree with random variables selection an example using crab data is presented bellow. In this case LDA method is used and the number of varibles used in each node partition is also 2 ({\tt size.p =0.5}).
-<<echo=TRUE,tidy=TRUE>>=
+<<echo=TRUE>>=
 Tree.crab <- PPforest::PPtree_split("Type~.", data = crab,
                                     PPmethod = "LDA", size.p = 0.5)
 @
 
-<<echo=TRUE,tidy=TRUE>>=
+<<echo=TRUE>>=
 str(Tree.crab, max.level = TRUE)
 @
   
@@ -249,8 +252,138 @@ str(Tree.crab, max.level = TRUE)
   \caption{Summary of putput values of function {\tt PPtree\_split} \label{ppsplitfunout}}
   \end{table}
   \end{center}  
+
   
+\subsection{{\tt baggtree}}
+
+ \begin{center}
+ \begin{table}[!h]
+ \caption{Summary of available arguments of function {\tt baggtree} \label{baggtreefun}}
+  \begin{tabular}{ l | p{12cm} } \hline
+  \textbf{Arguments} & \textbf{Description}\\ \hline
+{\tt data} &	Data frame with the complete data set\\ \hline
+{\tt class} &	A character with the name of the class variable \\ \hline
+{\tt m} &	Number of bootstrap replicates, this corresponds with the number of trees to grow. To ensure that each observation is predicted a few times we have to select this number no too small. m = 500 is by default\\ \hline
+{\tt PPmethod} &	Projection pursuit index to be optimized, options LDA or PDA, by default it is LDA\\ \hline
+{\tt lambda} &	a parameter for PDA index \\ \hline
+{\tt size.p} & proportion of random sample variables in each split \\ \hline
+{\tt parallel} &	logical condition, if it is TRUE then parallelize the function \\ \hline
+{\tt cores} & 	number of cores used in the parallelization \\ \hline
+  \end{tabular}
+  \end{table}
+  \end{center}
   
+<<>>=
+crab.trees <- baggtree(data = crab, class = "Type",
+m =  200, PPmethod = 'LDA', lambda = .1, size.p = 0.5 , parallel = TRUE, cores = 2)
+str(crab.trees[[1]], max.level = 1)
+
+@
+  
+\subsection{{\tt node\_data}}
+ \begin{center}
+ \begin{table}[!h]
+ \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}}
+  \begin{tabular}{ l | p{12cm} } \hline
+  \textbf{Arguments} & \textbf{Description}\\ \hline
+{\tt ppf} &	is a PPforest object\\ \hline
+{\tt tr} &	numerical value to identify a tree\\ \hline
+{\tt Rule} & 	split rule 1:mean of two group means, 2:weighted mean, 3: mean of max(left group) and min(right group), 4: weighted mean of max(left group) and min(right group) \\ \hline
+  \end{tabular}
+  \end{table}
+  \end{center}
+
+<<>>=
+pprf.crab <- PPforest(data = crab, std =TRUE, class = "Type",
+ size.tr = 1, m = 200, size.p = .5, PPmethod = 'LDA')
+node_data(ppf = pprf.crab, tr = 1)  %>% head()
+
+@
+\subsection{{\tt PPclassify2}}
+
+ \begin{center}
+ \begin{table}[!h]
+ \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}}
+  \begin{tabular}{ l | p{12cm} } \hline
+  \textbf{Arguments} & \textbf{Description}\\ \hline
+{\tt Tree.result}	&the result of PP.Tree\\ \hline
+{\tt test.data} & 	the test dataset \\ \hline
+{\tt Rule} &	split rule 1:mean of two group means, 2:weighted mean, 3: mean of max(left group) and min(right group), 4: weighted mean of max(left group) and min(right group)\\ \hline
+{\tt true.class} & 	true class of test dataset if available\\ \hline
+ \end{tabular}
+  \end{table}
+  \end{center}
+  
+<<>>=
+Tree.crab <- PPtree_split("Type~.", data = crab, PPmethod = "LDA", size.p = 0.5)
+str(PPclassify2(Tree.crab))
+@
+
+
+\subsection{{\tt tree\_pred}}
+
+ \begin{center}
+ \begin{table}[!h]
+ \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}}
+  \begin{tabular}{ l | p{12cm} } \hline
+  \textbf{Arguments} & \textbf{Description}\\ \hline
+{\tt object}	 &trees classifiers from trees\_pp function or PPforest object\\ \hline
+{\tt xnew}&	data frame with explicative variables used to get new predicted values\\ \hline
+{\tt parallel}	& logical condition, if it is TRUE then parallelize the function\\ \hline
+{\tt cores} &	number of cores used in the parallelization\\ \hline
+{\tt ...} &	arguments to be passed to methods\\ \hline
+ \end{tabular}
+  \end{table}
+  \end{center}
+
+\subsection{{\tt ternary\_str}}
+
+ \begin{center}
+ \begin{table}[!h]
+ \caption{Summary of available arguments of function {\tt ternary} \label{ternafun}}
+  \begin{tabular}{ l | p{12cm} } \hline
+  \textbf{Arguments} & \textbf{Description}\\ \hline
+{\tt ppf}	&is a PPforest object\\ \hline
+{\tt id} &	is a vector with the selected projection directions\\ \hline
+{\tt sp} &	is the simplex dimensions, if k is the number of classes $sp = k - 1$\\ \hline
+{\tt dx}&	first direction included in id\\ \hline
+{\tt dy}	&second direction included in id\\ \hline
+ \end{tabular}
+  \end{table}
+  \end{center}
+ <<>>=
+pprf.crab <- PPforest(data = crab, std =TRUE, class = "Type", 
+size.tr = 1, m = 200, size.p = .5, PPmethod = 'LDA')
+ require(dplyr)
+pl_ter <- function(dat, dx, dy ){
+  p1  <- dat[[1]] %>% dplyr::filter(pair %in% paste(dx, dy, sep = "-") ) %>%
+    dplyr::select(Class, x, y) %>%
+    ggplot2::ggplot(ggplot2::aes(x, y, color = Class)) +
+    ggplot2::geom_segment(data = dat[[2]], ggplot2::aes(x = x1, xend = x2,
+                                               y = y1, yend = y2), color = "black" ) +
+    ggplot2::geom_point(size = I(3), alpha = .5) +
+    ggplot2::labs(y = " ",  x = " ") +
+    ggplot2::theme(legend.position = "none", aspect.ratio = 1) +
+    ggplot2::scale_colour_brewer(type = "qual", palette = "Dark2") +
+    ggplot2::labs(x = paste0("T", dx, " "), y = paste0("T", dy, " ")) +
+    ggplot2::theme(aspect.ratio = 1)
+  p1
+}
+#ternary plot in tree different selected dierections
+p1 <- pl_ter(ternary_str(pprf.crab, id = c(1, 2, 3), sp = 3, dx = 1, dy = 2), 1, 2 )
+p2 <-  pl_ter(ternary_str(pprf.crab, id = c(1, 2, 3), sp = 3, dx = 1, dy = 3), 1, 3)
+p3 <-  pl_ter(ternary_str(pprf.crab, id = c(1, 2, 3), sp = 3, dx = 2, dy = 3), 2, 3)
+gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
+
+@
+\subsection{{\tt permute\_importance}}
+
+
+
+\subsection{{\tt ppf\_avg\_pptree\_imp}}
+\subsection{{\tt ppf\_global\_imp}}
+\subsection{{\tt print.PPforest}}
+
 
 % baggtree this function grow a PPtreeclass using PPtree\_split for each bootstrap sample.
 % This function returns a data frame with the results from PPtree\_split for each bootsrap samples.
