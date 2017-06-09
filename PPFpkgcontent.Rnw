@@ -5,67 +5,35 @@ To improve the speed performance of PPforest package, the main functions were im
 PPforest package utilizes a number of R packages some of them included in ``suggests'' not to load them all at package start-up.
 In this user manual, the key functions included in the package are presented and some visualizations using PPforest diagnostics.
 
-% \section{Projection pursuit classification forest}
-% In PPforest, projection pursuit classification trees  are used as the individual model to be combined in the forest. The original algorithm is in \pkg{PPtreeViz} package,  we translate the original tree algorithm into \pkg{Rcpp} to improve the speed performance to run the forest.
-
-% One important characteristic of PPtree is that treats the data always as a two-class system,  when the classes are more than two the algorithm uses a two step  projection pursuits optimization in every node split.
-% Let  $(X_i,y_i)$ the data set, $X_i$ is a  p-dimensional vector of explanatory variables and  $y_i\in {1,2,\ldots G}$ represents class information with $i=1,\ldots n$.
-% 
-% In the first step optimize a projection pursuit index to find an optimal one-dimension projection $\alpha^*$ for separating all classes in the current data. With the projected data redefine the problem in a two class problem by comparing means, and assign a new label $g_1$ or $g_2$ to each observation, a new variable $y_i^*$ is created.  The new groups $g_1$ and $g_2$ can contain more than one original classes. Next step is to find an optimal one-dimensional projection $\alpha^{**}$, using $(X_i,y_i^*)$ to separate the two class problem $g_1$ and $g_2$. The best separation of $g_1$ and $g_2$ is determined in this step and the decision rule is defined for the current node, if $\sum_{i=1}^p \alpha_i M1< c$ then assign $g_1$ to the left node else assign $g_2$ to the right node, where $M1$ is the mean of $g_1$.
-% For each groups we can repeat all the previous steps until $g_1$ and $g_2$ have only one class from the original classes. Base on this process to grow the tree, the depth of PPtree is at most the number of classes because one class is assigned only to one final node.
-% 
-% Trees from \pkg{PPtree} algorithm are simple, they use the association between variables to find separation. If a linear boundary exists, \pkg{PPtree} produces a tree without misclassification.
-% 
-% Projection pursuit random forest algorithm description
-% 
-% \begin{enumerate}
-% \item Let N the number of cases in the training set $\Theta=(X,Y)$, $B$ bootstrap samples from the training set are taking (samples of size N with replacement).
-% 
-% \item For each bootstrap sample a \verb PPtree  is grown to the largest extent possible $h(x, {\Theta_k})$. No pruning. This tree is grown using step 3 modification.
-% 
-% \item Let M the number of input variables, a number of $m<<M$ variables are selected at random at each node and the best split based on a linear combination of these randomly chosen variables. The linear combination is computed by optimizing a projection pursuit index, to get a projection of the variables that best separates the classes.
-% 
-% \item  Predict the classes of each case not included in the bootstrap sample and compute oob error.
-% 
-% \item  Based on majority vote predict the class for new data.
-% \end{enumerate}
 \section{Package description and illustrative examples}
 In this section, a detailed description of \pkg{PPforest} package along with examples is presented. To get detailed information about PPforest method check \cite{dasilvappforest}
 \pkg{PPforest} package implements a classification random forest using projection pursuit classification trees.
 
 \subsection{Functions and data}
 Table \ref{tabfun} shows the complete list of functions included in the package along with a brief description. 
-%A summary of the main functions in \pkg{PPforest} is presented.
-% 
-% \begin{itemize}
-% \item Bagged projection pursuit trees are implemented.
-% \item Projected data and boundaries for each node partition are available.
-% \item Predictions for test data and error calculation.
-% \item Projection pursuit random forest for classification problems
-% \item Importance variable measures.
-% \item Data structure to plot generalized ternary plots using vote matrix information.
-% \end{itemize}
+
  \begin{center}
- \begin{table}[!h]
+ \begin{table}[!hbpt]
+  \caption{Summary of functions implemented in \pkg{PPforest}\label{tabfun}}
   \begin{tabular}{ l | p{12cm} } \hline
 \textbf{Function} &\textbf{Description} \\ \hline
- {\tt baggtree}&For each bootstrap sample grow a projection pursuit tree (PPtree object)\\ \\ \hline
- {\tt node\_data} &Data structure with the  projected and boundary by node and class\\ \\ \hline
- {\tt PPclassify2}&Predict class for a test dataset and calculate prediction error\\ \\ \hline
- {\tt PPforest} &Runs a Projection pursuit random forest\\ \\ \hline
- {\tt permute\_importance}&Obtain the permuted importance variable measure\\ \\ \hline
- {\tt PPtree\_split}&Projection pursuit classification tree with random variable selection in each split\\ \\ \hline
- {\tt ppf\_avg\_pptree\_imp}& Computes a global importance measure for a PPforest object, average\\ \\ \hline
- {\tt ppf\_global\_imp}& Computes a global importance measure for a PPforest object\\ \\ \hline
+ {\tt baggtree}&For each bootstrap sample grow a projection pursuit tree (PPtree object).\\ \\ \hline
+ {\tt node\_data} &Data structure with the  projected and boundary by node and class.\\ \\ \hline
+ {\tt PPclassify2}&Predict class for a test dataset and calculate prediction error.\\ \\ \hline
+ {\tt PPforest} &Runs a Projection pursuit random forest.\\ \\ \hline
+ {\tt permute\_importance}&Obtain the permuted importance variable measure.\\ \\ \hline
+ {\tt PPtree\_split}&Projection pursuit classification tree with random variable selection in each split.\\ \\ \hline
+ {\tt ppf\_avg\_pptree\_imp}& Computes a global importance measure for a PPforest object, average.\\ \\ \hline
+ {\tt ppf\_global\_imp}& Computes a global importance measure for a PPforest object.\\ \\ \hline
  {\tt print.PPforest}& Print PPforest object\\ \\ \hline
  {\tt predict.PPforest}&Predict class for the test set and calculate prediction error\\ \\ \hline
  {\tt ternary\_str}&Data structure with the  projected and boundary by node and class\\ \\ \hline
  {\tt tree\_pred}&Obtain predicted class for new data using PPforest t.\\ \\ 
    \hline
   \end{tabular}
-  \caption{Summary of functions implemented in \pkg{PPforest}\label{tabfun}}
   \end{table}
 \end{center}
+
 
 The developed version for the package is available on GitHub and will be soon on CRAN. To install \pkg{PPforest} you should run the following code:
 <<echo = TRUE, message=FALSE, warning=FALSE,eval=FALSE>>=
@@ -94,11 +62,12 @@ require(PPtreeViz)
 require(plotly)
 require(dplyr)
 library(ggplot2)
+library(ggmosaic)
 @
-\begin{figure}[!h]
-<<fig.show='hold', fig.width = 5, fig.height = 5, echo=FALSE>>=
+\begin{figure}[!hbpt]
+<< echo=FALSE, fig.height=8, fig.width=8, message=FALSE>>=
 
-a <- GGally::ggpairs(PPforest::crab,
+a <- ggpairs(PPforest::crab,
     columns = 2:6,
     ggplot2::aes(colour = Type, alpha = .1),
     lower = list(continuous = 'points'),
@@ -111,48 +80,51 @@ a
 \caption{Scatter plot matrix for crab data \label{scatercrab}}
 \end{figure}
 \pkg{PPforest} includes some data set that were used to test its predictive performance. The data sets included are summarized in Table \ref{datappf}.
+
 \begin{center}
-\begin{table}[!h]
+\begin{table}[!hbpt]
+ \caption{Summary of data included in \pkg{PPforest} package\label{datappf}}
 \begin{tabular}{ l | p{12cm} } \hline
 \textbf{Data} & \textbf{Description}\\ \hline
-{\tt crab} & Measurements on rock crabs of the genus Leptograpsus \\ \\ \hline
-{\tt fishcatch} & Measurements on fishes caught form Finland\\ \\ \hline
-{\tt glass} & Measurements on 6 different types of class\\ \\ \hline
-{\tt image} & Instances from 7 outoor images\\ \\ \hline
-{\tt leukemia} & Gene expression data set in two types of acute leukemias\\ \\ \hline
-{\tt lymphoma} & Gene expression in the three most prevalent adult lymphoid malignancies\\ \\ \hline
-{\tt NCI60} & Gene expression data among the 60 cell lines\\ \\ \hline
-{\tt parkinson} & Data set containing 195 observations from 2 parkinson types \\ \\ \hline
-{\tt wine} & Data set containing observations from 3 wine grown cultivares in Italy\\  \\ \hline
+{\tt crab} & Measurements on rock crabs of the genus Leptograpsus. \\ \\ \hline
+{\tt fishcatch} & Measurements on fishes caught form Finland.\\ \\ \hline
+{\tt glass} & Measurements on 6 different types of class.\\ \\ \hline
+{\tt image} & Instances from 7 outoor images.\\ \\ \hline
+{\tt leukemia} & Gene expression data set in two types of acute leukemias.\\ \\ \hline
+{\tt lymphoma} & Gene expression in the three most prevalent adult lymphoid malignancies.\\ \\ \hline
+{\tt NCI60} & Gene expression data among the 60 cell lines.\\ \\ \hline
+{\tt parkinson} & Data set containing 195 observations from 2 parkinson types. \\ \\ \hline
+{\tt wine} & Data set containing observations from 3 wine grown cultivares in Italy.\\  \\ \hline
   \end{tabular}
-  \caption{Summary of data included in \pkg{PPforest} package\label{datappf}}
   \end{table}
 \end{center}
+
+
 
 \subsection{{\tt PPforest}}
 
 The main function of the package is called {\tt PPforest} which implements a projection pursuit random forest. Table \ref{ppforestfun} presents the {\tt PPforest} function arguments and their respective description.
   \begin{center}
- \begin{table}[!h]
+ \begin{table}[!hbpt]
  \caption{Summary of available arguments of function {\tt PPforest} \label{ppforestfun}}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt data}	& Data frame with the complete data set\\ \hline
 {\tt class}	& A character with the name of the class variable.\\ \hline
-{\tt std} & if TRUE standardize the data set, needed to compute global importance measure\\ \hline
-{\tt size.tr} & is the size proportion of the training if we want to split the data in\\ &training and test\\ \hline
- {\tt m}&is the number of bootstrap replicates, this corresponds with the number of trees to\\ 
+{\tt std} & If TRUE standardize the data set, needed to compute global importance measure\\ \hline
+{\tt size.tr} &Size proportion of the training if we want to split the data in\\ &training and test\\ \hline
+ {\tt m}&Number of bootstrap replicates, this corresponds with the number of trees to\\ 
  &grow. To ensure that each observation is predicted a few times we have to select\\ 
  &this number no too small. m = 500 is by default\\ \hline
-{\tt PPmethod} & is the projection pursuit index to optimize in each classification tree. The options are\\
+{\tt PPmethod} & Projection pursuit index to optimize in each classification tree. The options are\\
 &LDA and PDA, linear discriminant and penalized linear discriminant. By default it is LDA\\ \hline
-{\tt size.p} & proportion of variables randomly sampled in each split\\ \hline
- {\tt lambda}& penalty parameter in PDA index and is between 0 to 1. If lambda = 0, no penalty\\
+{\tt size.p} & Proportion of variables randomly sampled in each split\\ \hline
+ {\tt lambda}& Penalty parameter in PDA index and is between 0 to 1. If lambda = 0, no penalty\\
  &parameter is added and the PDA index is the same as LDA index. If lambda = 1\\
  &all variables are treated as uncorrelated. The default value is lambda = 0.1\\ \hline
  {\tt parallel} &
-logical condition, if it is TRUE then parallelize the function\\ \hline
- {\tt cores} &number of cores used in the parallelization\\ \hline
+Logical condition, if it is TRUE then parallelize the function\\ \hline
+ {\tt cores} &Number of cores used in the parallelization\\ \hline
   \end{tabular}
   \end{table}
   \end{center}
@@ -161,9 +133,8 @@ logical condition, if it is TRUE then parallelize the function\\ \hline
 The number of trees in the forest is specified using the argument {\tt m}. The argument {\tt size.p} is the sample proportion of the variables used in each node split, {\tt PPmethod} is the projection pursuit index to be optimized,  two options LDA and PDA are available.
 The algorithm can be parallelized specifing {\tt parallel =TRUE} and the number of used cores can be incuded in {\tt core} core argument.
 
-
-
 The following code is to run {\tt PPforest} using crab data, in this case all the observations available are used to run the forest ({\tt size.tr = 1}), the number of trees is 200 ( {\tt m= 200})  and the proportion of variables used in each node partitions is .5 ({\tt size.p = .5} in this case 2 variables). The selected projection index is `LDA' ({\tt PPmethod =}) and the forest is parallelized ({\tt parallel = TRUE}).
+
 <<tidy=TRUE>>=
 set.seed(146)
 pprf.crab <- PPforest::PPforest(data = crab, class = "Type", size.tr = 1, 
@@ -176,57 +147,138 @@ pprf.crab <- PPforest::PPforest(data = crab, class = "Type", size.tr = 1,
 <<tidy=TRUE>>=
 pprf.crab
 @
+
 This function returns the predicted values of the training data, training error, test error and predicted test values. Also there is the information about out of bag error for the forest and also for each tree in the forest. Bootstrap samples, output of all the trees in the forest from , proximity matrix and vote matrix, number of trees grown in the forest, number of predictor variables selected to use for splitting at each node. Confusion matrix of the prediction (based on OOb data), the training data and test data and vote matrix are also returned.
 
 <<echo=TRUE>>=
  str(pprf.crab, max.level=1, list.len=5)
 @
-
-  \begin{center}
- \begin{table}[!h]
+\begin{center}
+ \begin{table}[!hbpt]
+\caption{Summary of available values of function {\tt PPforest} \label{ppforestout}}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Value} & \textbf{Description}\\ \hline
-{\tt prediction.training}	& predicted values for training data se\\  \hline
-{\tt training.error}	&error of the training data set.\\  \hline
-{\tt prediction.test} & predicted values for the test data set if testap = TRUE(default\\ \hline
-{\tt oob.error.forest} & out of bag error in the forest\\  \hline
- {\tt oob.error.tree}&out of bag error for each tree in the forest\\ \hline
-{\tt boot.samp} & information of bootrap samples.\\ \hline
-{\tt output.trees} & output from a {\tt trees\_pp} for each bootrap sample\\  \hline
+{\tt prediction.training}	& Predicted values for training data se\\  \hline
+{\tt training.error}	&Error of the training data set.\\  \hline
+{\tt prediction.test} & Predicted values for the test data set if testap = TRUE(default\\ \hline
+{\tt oob.error.forest} & Out of bag error in the forest\\  \hline
+ {\tt oob.error.tree}&Out of bag error for each tree in the forest\\ \hline
+{\tt boot.samp} & Information of bootrap samples.\\ \hline
+{\tt output.trees} & Output from a {\tt trees\_pp} for each bootrap sample\\  \hline
  {\tt proximity}& Proximity matrix, if two cases are classified in the same terminal node then the proximity matrix is increased by one in PPforest there are one terminal node per class\\  \hline
-
- {\tt votes} & a matrix with one row for each input data point and one column for each class, giving the fraction of (OOB) votes from the PPforest\\  \hline
- {\tt n.tree} &number of trees grown in PPforest\\  \hline
- {\tt n.var} &number of predictor variables selected to use for spliting at each node\\  \hline
- {\tt type} &classification\\  \hline
- {\tt confusion} &confusion matrix of the prediction (based on OOb data)\\  \hline
- {\tt call} & the original call to PPforest. \\  \hline
- {\tt train}& is the training data based on size.tr sample proportion\\  \hline
- {\tt test}& is the test data based on $1-${\tt size.tr} sample proportion\\  \hline
+ {\tt votes} & A matrix with one row for each input data point and one column for each class, giving the fraction of (OOB) votes from the PPforest\\  \hline
+ {\tt n.tree} &Number of trees grown in PPforest\\  \hline
+ {\tt n.var} &Number of predictor variables selected to use for spliting at each node\\  \hline
+ {\tt type} &Classification\\  \hline
+ {\tt confusion} &Confusion matrix of the prediction (based on OOb data)\\  \hline
+ {\tt call} & The original call to PPforest. \\  \hline
+ {\tt train}& Is the training data based on size.tr sample proportion\\  \hline
+ {\tt test}& Is the test data based on $1-${\tt size.tr} sample proportion\\  \hline
   \end{tabular}
-  \caption{Summary of available values of function {\tt PPforest} \label{ppforestout}}
   \end{table}
   \end{center}
 
+\subsection{{\tt baggtree}}
+This function grow a projection pursuit tree for each bootstrap sample and random sample selection in each node partition.
+A summary of the arguments and a description for this function is presented in Table \ref{baggtreefun}.
+ \begin{center}
+ \begin{table}[!h]
+ \caption{Summary of available arguments of function {\tt baggtree} \label{baggtreefun}}
+  \begin{tabular}{ l | p{12cm} } \hline
+  \textbf{Arguments} & \textbf{Description}\\ \hline
+{\tt data} &	Data frame with the complete data set\\ \hline
+{\tt class} &	A character with the name of the class variable \\ \hline
+{\tt m} &	Number of bootstrap replicates, this corresponds with the number of trees to grow. To ensure that each observation is predicted a few times we have to select this number no too small. m = 500 is by default\\ \hline
+{\tt PPmethod} &	Projection pursuit index to be optimized, options LDA or PDA, by default it is LDA\\ \hline
+{\tt lambda} &	A parameter for PDA index \\ \hline
+{\tt size.p} & Proportion of random sample variables in each split \\ \hline
+{\tt parallel} &	Logical condition, if it is TRUE then parallelize the function \\ \hline
+{\tt cores} & 	Number of cores used in the parallelization \\ \hline
+  \end{tabular}
+  \end{table}
+  \end{center}
+
+This function can be used directly but it is one of the main functions needed to run the forest. 
+<<>>=
+crab.trees <- baggtree(data = crab, class = "Type",
+m =  200, PPmethod = 'LDA', lambda = .1, size.p = 0.5 , parallel = TRUE, cores = 2)
+str(crab.trees[[1]], max.level = 1)
+
+@
 
 
-\newpage 
+\subsection{{\tt node\_data}}
+ \begin{center}
+ \begin{table}[!hbpt]
+ \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}}
+  \begin{tabular}{ l | p{12cm} } \hline
+  \textbf{Arguments} & \textbf{Description}\\ \hline
+{\tt ppf} &	Is a PPforest object\\ \hline
+{\tt tr} &	Numerical value to identify a tree\\ \hline
+{\tt Rule} & 	Split rule 1:mean of two group means, 2:weighted mean, 3: mean of max(left group) and min(right group), 4: weighted mean of max(left group) and min(right group) \\ \hline
+  \end{tabular}
+  \end{table}
+  \end{center}
+  
+
+<<>>=
+node_data(ppf = pprf.crab, tr = 1)  %>% head()
+@
+
+\begin{figure}[!hbpt]
+<< echo=TRUE, fig.height=4, fig.width=8, message=FALSE>>=
+ dat_pl <- PPforest::node_data(ppf = pprf.crab, tr = 1)
+ nodes <- c(1,2,3)
+  myColors <- RColorBrewer::brewer.pal( dim( unique(pprf.crab$train[pprf.crab$class.var]))[1], "Dark2")
+ names(myColors) <- levels(pprf.crab$train[pprf.crab$class.var][, 1])
+ dat_pl$Class <- as.factor(dat_pl$Class)
+   levels(dat_pl$Class) <-  levels(pprf.crab$train[pprf.crab$class.var][, 1])
+  dat_pl %>%
+          dplyr::filter(node.id %in% unique(node.id)[nodes]) %>%
+        ggplot2::ggplot(aes(  x = proj.data, group = Class, fill = Class )) +
+         ggplot2::geom_density(alpha = .5) +
+          ggplot2::facet_grid(~ node.id, scales = 'free') +
+         ggplot2::scale_fill_manual("", values = myColors) +
+         ggplot2::geom_vline(ggplot2::aes(xintercept = cut),
+                 linetype = "dashed",
+                 color = 2) + ggplot2::xlab("") + ggplot2::theme(legend.position = "bottom")
+@
+\end{figure}
+\begin{figure}[!hbpt]
+<<echo=TRUE, fig.height=4, fig.width=8, message=FALSE>>=
+  dat_mosaic <-
+ data.frame(with(dat_pl, table(Class, Dir, node.id)))
+    p1 <- dat_mosaic %>% dplyr::filter(node.id %in% unique(node.id)[nodes]) %>%
+     ggplot2::ggplot() + ggmosaic::geom_mosaic(ggplot2::aes(
+    weight = Freq,
+        x = ggmosaic::product(Class, Dir),
+      fill = Class
+      )) + ggplot2::facet_grid( ~ node.id) +
+      ggplot2::scale_fill_manual("", values = myColors) +
+      xlab("Class") + ggplot2::theme(
+         legend.position = "bottom",
+         axis.text.x  = element_text(angle = 90, vjust = 0.5),aspect.ratio = 1
+      )
+    p1
+@
+\end{figure}
+
 
 \subsection{{\tt PPtree\_split}}
 {\tt PPtree\_split} function implements a projection pursuit classification tree with random variable selection in each split, based on the original PPtreeViz algorithm. This function returns a PPtreeclass object.
 A summary of available arguments and its descriprion is presented in Table \ref{ppsplitfun}
  \begin{center}
  \begin{table}[!h]
+ \caption{Summary of available arguments of function {\tt PPtree\_split} \label{ppsplitfun}}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt form} & 	A character with the name of the class variable\\ \hline
 { \tt data} &	Data frame with the complete data set \\ \hline
-{ \tt PPmethod} &	index to use for projection pursuit: `LDA', `PDA' \\ \hline
-{\tt size.p} & 	proportion of variables randomly sampled in each split, default is 1, returns a PPtree pbject\\ \hline
-{\tt lambda} &	penalty parameter in PDA index and is between 0 to 1 . If lambda = 0, no penalty parameter is added and the PDA index is the same as LDA index. If lambda = 1 all variables are treated as uncorrelated. The default value is lambda = 0.1\\ \hline
-{\tt...}&	arguments to be passed to methods\\ \hline
+{ \tt PPmethod} &	Index to use for projection pursuit: `LDA', `PDA' \\ \hline
+{\tt size.p} & 	Proportion of variables randomly sampled in each split, default is 1, returns a PPtree pbject\\ \hline
+{\tt lambda} &	Penalty parameter in PDA index and is between 0 to 1 . If lambda = 0, no penalty parameter is added and the PDA index is the same as LDA index. If lambda = 1 all variables are treated as uncorrelated. The default value is lambda = 0.1\\ \hline
+{\tt...}&	Arguments to be passed to methods\\ \hline
   \end{tabular}
-  \caption{Summary of available arguments of function {\tt PPtree\_split} \label{ppsplitfun}}
   \end{table}
   \end{center}
 To run one tree with random variables selection an example using crab data is presented bellow. In this case LDA method is used and the number of varibles used in each node partition is also 2 ({\tt size.p =0.5}).
@@ -238,9 +290,10 @@ Tree.crab <- PPforest::PPtree_split("Type~.", data = crab,
 <<echo=TRUE>>=
 str(Tree.crab, max.level = TRUE)
 @
-  
+
  \begin{center}
  \begin{table}[!h]
+  \caption{Summary of putput values of function {\tt PPtree\_split} \label{ppsplitfunout}}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Values} & \textbf{Description}\\ \hline
 {\tt Tree.Struct} & 	Tree structure of projection pursuit classification tree\\ \hline
@@ -249,56 +302,10 @@ str(Tree.crab, max.level = TRUE)
 {\tt origclass} & original class\\ \hline
 {\tt origdata} &	original data\\ \hline
   \end{tabular}
-  \caption{Summary of putput values of function {\tt PPtree\_split} \label{ppsplitfunout}}
-  \end{table}
+   \end{table}
   \end{center}  
-
   
-\subsection{{\tt baggtree}}
 
- \begin{center}
- \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt baggtree} \label{baggtreefun}}
-  \begin{tabular}{ l | p{12cm} } \hline
-  \textbf{Arguments} & \textbf{Description}\\ \hline
-{\tt data} &	Data frame with the complete data set\\ \hline
-{\tt class} &	A character with the name of the class variable \\ \hline
-{\tt m} &	Number of bootstrap replicates, this corresponds with the number of trees to grow. To ensure that each observation is predicted a few times we have to select this number no too small. m = 500 is by default\\ \hline
-{\tt PPmethod} &	Projection pursuit index to be optimized, options LDA or PDA, by default it is LDA\\ \hline
-{\tt lambda} &	a parameter for PDA index \\ \hline
-{\tt size.p} & proportion of random sample variables in each split \\ \hline
-{\tt parallel} &	logical condition, if it is TRUE then parallelize the function \\ \hline
-{\tt cores} & 	number of cores used in the parallelization \\ \hline
-  \end{tabular}
-  \end{table}
-  \end{center}
-  
-<<>>=
-crab.trees <- baggtree(data = crab, class = "Type",
-m =  200, PPmethod = 'LDA', lambda = .1, size.p = 0.5 , parallel = TRUE, cores = 2)
-str(crab.trees[[1]], max.level = 1)
-
-@
-  
-\subsection{{\tt node\_data}}
- \begin{center}
- \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}}
-  \begin{tabular}{ l | p{12cm} } \hline
-  \textbf{Arguments} & \textbf{Description}\\ \hline
-{\tt ppf} &	is a PPforest object\\ \hline
-{\tt tr} &	numerical value to identify a tree\\ \hline
-{\tt Rule} & 	split rule 1:mean of two group means, 2:weighted mean, 3: mean of max(left group) and min(right group), 4: weighted mean of max(left group) and min(right group) \\ \hline
-  \end{tabular}
-  \end{table}
-  \end{center}
-
-<<>>=
-pprf.crab <- PPforest(data = crab, std =TRUE, class = "Type",
- size.tr = 1, m = 200, size.p = .5, PPmethod = 'LDA')
-node_data(ppf = pprf.crab, tr = 1)  %>% head()
-
-@
 \subsection{{\tt PPclassify2}}
 
  \begin{center}
@@ -351,7 +358,8 @@ str(PPclassify2(Tree.crab))
  \end{tabular}
   \end{table}
   \end{center}
- <<>>=
+
+ <<echo = TRUE>>=
 pprf.crab <- PPforest(data = crab, std =TRUE, class = "Type", 
 size.tr = 1, m = 200, size.p = .5, PPmethod = 'LDA')
  require(dplyr)
@@ -360,7 +368,7 @@ pl_ter <- function(dat, dx, dy ){
     dplyr::select(Class, x, y) %>%
     ggplot2::ggplot(ggplot2::aes(x, y, color = Class)) +
     ggplot2::geom_segment(data = dat[[2]], ggplot2::aes(x = x1, xend = x2,
-                                               y = y1, yend = y2), color = "black" ) +
+                                     y = y1, yend = y2), color = "black" ) +
     ggplot2::geom_point(size = I(3), alpha = .5) +
     ggplot2::labs(y = " ",  x = " ") +
     ggplot2::theme(legend.position = "none", aspect.ratio = 1) +
@@ -592,44 +600,8 @@ gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
 %  } 
 %  impotree(crab, pprf.crab, tree =1 ) 
 % @
-% \end{figure}
-% \begin{figure}
-% << fig.show = 'hold', fig.width = 5 ,fig.height = 4, warning = FALSE>>=
-%  dat_pl <- PPforest::node_data(ppf = pprf.crab, tr = 1) 
-%  nodes <- c(1,2,3) 
-%   myColors <- RColorBrewer::brewer.pal( dim( unique(pprf.crab$train[pprf.crab$class.var]))[1], "Dark2") 
-%  names(myColors) <- levels(pprf.crab$train[pprf.crab$class.var][, 1]) 
-%  dat_pl$Class <- as.factor(dat_pl$Class) 
-%    levels(dat_pl$Class) <-  levels(pprf.crab$train[pprf.crab$class.var][, 1]) 
-%   dat_pl %>% 
-%           dplyr::filter(node.id %in% unique(node.id)[nodes]) %>% 
-%         ggplot2::ggplot(aes(  x = proj.data, group = Class, fill = Class )) + 
-%          ggplot2::geom_density(alpha = .5) + 
-%           ggplot2::facet_grid(~ node.id, scales = 'free') + 
-%          ggplot2::scale_fill_manual("", values = myColors) + 
-%          ggplot2::geom_vline(ggplot2::aes(xintercept = cut), 
-%                  linetype = "dashed", 
-%                  color = 2) + ggplot2::xlab("") + ggplot2::theme(legend.position = "bottom")
-% @
-% \end{figure}
-% \begin{figure}
-% <<fig.show = 'hold', fig.width = 5 ,fig.height = 4, warning = FALSE>>=
-%   dat_mosaic <-
-%  data.frame(with(dat_pl, table(Class, Dir, node.id))) 
-%     p1 <- dat_mosaic %>% dplyr::filter(node.id %in% unique(node.id)[nodes]) %>% 
-%      ggplot2::ggplot() + ggmosaic::geom_mosaic(ggplot2::aes( 
-%     weight = Freq, 
-%         x = ggmosaic::product(Class, Dir), 
-%       fill = Class 
-%       )) + ggplot2::facet_grid( ~ node.id) + 
-%       ggplot2::scale_fill_manual("", values = myColors) + 
-%       xlab("Class") + ggplot2::theme( 
-%          legend.position = "bottom", 
-%          axis.text.x  = element_text(angle = 90, vjust = 0.5),aspect.ratio = 1 
-%       ) 
-%     p1 
-% @
-% \end{figure}
+%\end{figure}
+
 %  From PPforest object we can plot a heat map of the proximity matrix using the function pproxy\_plot. 
 % This function has tree arguments, ppf is a PPforest object, type an argument that specify if the plot is a heatmap or a MDS plot.
 % If the plot is a MDS plot the argument k defines the number of MDS layouts. 
@@ -705,3 +677,4 @@ gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
 % <!--        print(import.vi.wg) -->
 % 
 % <!--      plotly::ggplotly(a) -->
+
