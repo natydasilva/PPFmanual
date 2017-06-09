@@ -133,7 +133,7 @@ Logical condition, if it is TRUE then parallelize the function\\ \hline
 The number of trees in the forest is specified using the argument {\tt m}. The argument {\tt size.p} is the sample proportion of the variables used in each node split, {\tt PPmethod} is the projection pursuit index to be optimized,  two options LDA and PDA are available.
 The algorithm can be parallelized specifing {\tt parallel =TRUE} and the number of used cores can be incuded in {\tt core} core argument.
 
-The following code is to run {\tt PPforest} using crab data, in this case all the observations available are used to run the forest ({\tt size.tr = 1}), the number of trees is 200 ( {\tt m= 200})  and the proportion of variables used in each node partitions is .5 ({\tt size.p = .5} in this case 2 variables). The selected projection index is `LDA' ({\tt PPmethod =}) and the forest is parallelized ({\tt parallel = TRUE}).
+The following code is to run {\tt PPforest} using crab data, in this case all the observations available are used to run the forest ({\tt size.tr = 1}), the number of trees is 200 ( {\tt m= 200})  and the proportion of variables used in each node partitions is .5 ({\tt size.p = .5}) in this case 2 variables). The selected projection index is `LDA' ({\tt PPmethod = 'LDA'}) and the forest is parallelized ({\tt parallel = TRUE}) specifieng two cores ({\tt cores = 2}).
 
 <<tidy=TRUE>>=
 set.seed(146)
@@ -208,6 +208,8 @@ str(crab.trees[[1]], max.level = 1)
 
 
 \subsection{{\tt node\_data}}
+This functions stucture data and contain useful information to visualize {\tt PPforest} results. The information contained is projected data and boudary bu node and class.
+Table \ref{nodedatfun} contains a summary whit the main argument described for {\tt node\_data}.
  \begin{center}
  \begin{table}[!hbpt]
  \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}}
@@ -220,53 +222,78 @@ str(crab.trees[[1]], max.level = 1)
   \end{table}
   \end{center}
   
-
+This function can be implenented as follows, in this case the PPforest object ({\tt ppf}) is ppf.crab, the selected tree is 1 ({\tt tr =1}) and the rule by default is 1 ({\tt Rule = 1}). 
 <<>>=
 node_data(ppf = pprf.crab, tr = 1)  %>% head()
 @
 
+\begin{center}
+ \begin{table}[!h]
+ \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatout}}
+  \begin{tabular}{ l | p{12cm} } \hline
+  \textbf{Value} & \textbf{Description}\\ \hline
+{\tt proj.data}	&Projected data for each node and class\\ \hline
+{\tt Class} & 	Original class for each node. \\ \hline
+{\tt cut} &	Split value for each node partition.\\ \hline
+{\tt node.id} & 	Node identifier\\ \hline
+{\tt LR.class } & Node side information, L indicates left node and R indicates right node. \\ \hline
+{\tt Dir} & Direction.\\ \hline
+ \end{tabular}
+  \end{table}
+  \end{center}
+
+This function is usefull to visualize PPtree results because it makes available the projected information for each class and node. Figure \ref{densi} shows a density plot for tree 1 in the forest and for three nodes. For a further explanation about visualization for PPforest objects check \cite{da2017interactive}.
+
+
+
 \begin{figure}[!hbpt]
 << echo=TRUE, fig.height=4, fig.width=8, message=FALSE>>=
- dat_pl <- PPforest::node_data(ppf = pprf.crab, tr = 1)
- nodes <- c(1,2,3)
-  myColors <- RColorBrewer::brewer.pal( dim( unique(pprf.crab$train[pprf.crab$class.var]))[1], "Dark2")
- names(myColors) <- levels(pprf.crab$train[pprf.crab$class.var][, 1])
- dat_pl$Class <- as.factor(dat_pl$Class)
-   levels(dat_pl$Class) <-  levels(pprf.crab$train[pprf.crab$class.var][, 1])
-  dat_pl %>%
-          dplyr::filter(node.id %in% unique(node.id)[nodes]) %>%
-        ggplot2::ggplot(aes(  x = proj.data, group = Class, fill = Class )) +
-         ggplot2::geom_density(alpha = .5) +
-          ggplot2::facet_grid(~ node.id, scales = 'free') +
-         ggplot2::scale_fill_manual("", values = myColors) +
-         ggplot2::geom_vline(ggplot2::aes(xintercept = cut),
-                 linetype = "dashed",
-                 color = 2) + ggplot2::xlab("") + ggplot2::theme(legend.position = "bottom")
+dat_pl <- node_data(ppf = pprf.crab, tr = 1)
+nodes <- c(1,2,3)
+myColors <- brewer.pal( 
+  dim( unique(pprf.crab$train[pprf.crab$class.var]))[1], "Dark2")
+names(myColors) <- levels(pprf.crab$train[pprf.crab$class.var][, 1])
+dat_pl$Class <- as.factor(dat_pl$Class)
+levels(dat_pl$Class) <-  levels(pprf.crab$train[pprf.crab$class.var][, 1])
+dat_pl %>%
+  filter(node.id %in% unique(node.id)[nodes]) %>%
+  ggplot(aes(  x = proj.data, group = Class, fill = Class )) +
+  geom_density(alpha = .5) +
+  facet_grid(~ node.id, scales = 'free') +
+  scale_fill_manual("", values = myColors) +
+  geom_vline(aes(xintercept = cut),
+             linetype = "dashed",
+             color = 2) + xlab("") + theme(legend.position = "bottom")
 @
-\end{figure}
-\begin{figure}[!hbpt]
-<<echo=TRUE, fig.height=4, fig.width=8, message=FALSE>>=
-  dat_mosaic <-
- data.frame(with(dat_pl, table(Class, Dir, node.id)))
-    p1 <- dat_mosaic %>% dplyr::filter(node.id %in% unique(node.id)[nodes]) %>%
-     ggplot2::ggplot() + ggmosaic::geom_mosaic(ggplot2::aes(
-    weight = Freq,
-        x = ggmosaic::product(Class, Dir),
-      fill = Class
-      )) + ggplot2::facet_grid( ~ node.id) +
-      ggplot2::scale_fill_manual("", values = myColors) +
-      xlab("Class") + ggplot2::theme(
-         legend.position = "bottom",
-         axis.text.x  = element_text(angle = 90, vjust = 0.5),aspect.ratio = 1
-      )
-    p1
-@
+\caption{Visualizing the PPtree model of the crab data. The tree has three nodes (top). The density plots show the data projections at each node, colored by group (middle). The dashed vertical red line indicates the split value of each node. At node 1 the blue species is separated from orange species. Nodes 2 and 3 separate the sexes, which are more confused for the blue species.\label{densi}}
 \end{figure}
 
+Figure \ref{mos} shows an additionall visualization using the information from {\tt dats\_node} function. This figure is a mosaic plot for the confusion table for each split.
+\begin{figure}[!hbpt]
+<<echo=TRUE, fig.height=4, fig.width=8, message=FALSE>>=
+dat_mosaic <-
+  data.frame(with(dat_pl, table(Class, Dir, node.id)))
+p1 <- dat_mosaic %>% filter(node.id %in% unique(node.id)[nodes]) %>%
+  ggplot() + geom_mosaic(aes(
+    weight = Freq,
+    x = product(Class, Dir),
+    fill = Class
+  )) + facet_grid( ~ node.id) +
+  scale_fill_manual("", values = myColors) +
+  xlab("Class") + theme(
+    legend.position = "bottom",
+    axis.text.x  = element_text(angle = 90, vjust = 0.5), aspect.ratio = 1
+  )
+p1
+@
+\caption{Mosaic plots of the confusion table for each split. Node 1 shows the clear split of the species, with a small number of misclassifications. Node 2 where orange females are separated from orange males indicates small number of misclassifications. Node 3 where blue females are separated from blue males, shows a larger misclassification than for orange specie.\label{mos}}
+\end{figure}
+
+\newpage
 
 \subsection{{\tt PPtree\_split}}
 {\tt PPtree\_split} function implements a projection pursuit classification tree with random variable selection in each split, based on the original PPtreeViz algorithm. This function returns a PPtreeclass object.
-A summary of available arguments and its descriprion is presented in Table \ref{ppsplitfun}
+A summary of available arguments and its description is presented in Table \ref{ppsplitfun}
  \begin{center}
  \begin{table}[!h]
  \caption{Summary of available arguments of function {\tt PPtree\_split} \label{ppsplitfun}}
@@ -283,7 +310,7 @@ A summary of available arguments and its descriprion is presented in Table \ref{
   \end{center}
 To run one tree with random variables selection an example using crab data is presented bellow. In this case LDA method is used and the number of varibles used in each node partition is also 2 ({\tt size.p =0.5}).
 <<echo=TRUE>>=
-Tree.crab <- PPforest::PPtree_split("Type~.", data = crab,
+Tree.crab <-PPtree_split("Type~.", data = crab,
                                     PPmethod = "LDA", size.p = 0.5)
 @
 
@@ -293,7 +320,7 @@ str(Tree.crab, max.level = TRUE)
 
  \begin{center}
  \begin{table}[!h]
-  \caption{Summary of putput values of function {\tt PPtree\_split} \label{ppsplitfunout}}
+  \caption{Summary of output values of function {\tt PPtree\_split} \label{ppsplitfunout}}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Values} & \textbf{Description}\\ \hline
 {\tt Tree.Struct} & 	Tree structure of projection pursuit classification tree\\ \hline
@@ -305,22 +332,34 @@ str(Tree.crab, max.level = TRUE)
    \end{table}
   \end{center}  
   
+Since {\tt Tree.crab} is a PPtreeclass object all the visualization in \pkg{PPtreeViz} package can be implemented.
+\begin{figure}[!hbpt]
+<<>>=
+library(PPtreeViz)
+plot(Tree.crab, font.size = 12, width.size = .8)
+@
+\caption{Tree structure plot using \pkg{PPtreeViz}}
+\end{figure}
+
+%%%
 
 \subsection{{\tt PPclassify2}}
-
- \begin{center}
+This function predict the class for the test set and compute the predicted error rate form a PPtree object.
+Table 
+ 
+  \begin{center}
  \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}}
+  \caption{Summary of available arguments of function {\tt PPclassify2} \label{ppclassfun}}
   \begin{tabular}{ l | p{12cm} } \hline
-  \textbf{Arguments} & \textbf{Description}\\ \hline
-{\tt Tree.result}	&the result of PP.Tree\\ \hline
-{\tt test.data} & 	the test dataset \\ \hline
+  \textbf{Argument} & \textbf{Description}\\ \hline
+{\tt Tree.result} &	The result of PP.Tree.\\ \hline
+{\tt test.data} &	The test dataset. \\ \hline
 {\tt Rule} &	split rule 1:mean of two group means, 2:weighted mean, 3: mean of max(left group) and min(right group), 4: weighted mean of max(left group) and min(right group)\\ \hline
-{\tt true.class} & 	true class of test dataset if available\\ \hline
- \end{tabular}
-  \end{table}
-  \end{center}
-  
+{\tt true.class	} & True class of test dataset if available \\ \hline
+  \end{tabular}
+   \end{table}
+  \end{center}  
+ 
 <<>>=
 Tree.crab <- PPtree_split("Type~.", data = crab, PPmethod = "LDA", size.p = 0.5)
 str(PPclassify2(Tree.crab))
@@ -677,4 +716,6 @@ gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
 % <!--        print(import.vi.wg) -->
 % 
 % <!--      plotly::ggplotly(a) -->
+
+
 
