@@ -108,7 +108,7 @@ a <- GGally::ggpairs(PPforest::crab,
 
 a
 @
-\caption{Scatter plot matrix for carb data \label{scatercrab}}
+\caption{Scatter plot matrix for crab data \label{scatercrab}}
 \end{figure}
 \pkg{PPforest} includes some data set that were used to test its predictive performance. The data sets included are summarized in Table \ref{datappf}.
 \begin{center}
@@ -129,11 +129,12 @@ a
   \end{table}
 \end{center}
 
-\subsection{{\tt PPForest}}
+\subsection{{\tt PPforest}}
 
 The main function of the package is called {\tt PPforest} which implements a projection pursuit random forest. Table \ref{ppforestfun} presents the {\tt PPforest} function arguments and their respective description.
   \begin{center}
  \begin{table}[!h]
+ \caption{Summary of available arguments of function {\tt PPforest} \label{ppforestfun}}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt data}	& Data frame with the complete data set\\ \hline
@@ -153,7 +154,6 @@ The main function of the package is called {\tt PPforest} which implements a pro
 logical condition, if it is TRUE then parallelize the function\\ \hline
  {\tt cores} &number of cores used in the parallelization\\ \hline
   \end{tabular}
-  \caption{Summary of available arguments of function {\tt PPforest} \label{ppforestfun}}
   \end{table}
   \end{center}
   
