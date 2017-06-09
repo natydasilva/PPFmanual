@@ -125,7 +125,7 @@ a
 {\tt parkinson} & Data set containing 195 observations from 2 parkinson types \\ \\ \hline
 {\tt wine} & Data set containing observations from 3 wine grown cultivares in Italy\\  \\ \hline
   \end{tabular}
-  \caption{Summary of functions implemented in \pkg{PPforest}\label{datappf}}
+  \caption{Summary of data included in \pkg{PPforest} package\label{datappf}}
   \end{table}
 \end{center}
 
