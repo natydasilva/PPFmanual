@@ -14,7 +14,7 @@ Table \ref{tabfun} shows the complete list of functions included in the package 
 
  \begin{center}
  \begin{table}[!hbpt]
-  \caption{Summary of functions implemented in \pkg{PPforest}\label{tabfun}}
+  \caption{Summary of functions implemented in \pkg{PPforest}.\label{tabfun}}
   \begin{tabular}{ l | p{12cm} } \hline
 \textbf{Function} &\textbf{Description} \\ \hline
  {\tt baggtree}&For each bootstrap sample grow a projection pursuit tree (PPtree object).\\ \\ \hline
@@ -28,7 +28,7 @@ Table \ref{tabfun} shows the complete list of functions included in the package 
  {\tt print.PPforest}& Print PPforest object\\ \\ \hline
  {\tt predict.PPforest}&Predict class for the test set and calculate prediction error\\ \\ \hline
  {\tt ternary\_str}&Data structure with the  projected and boundary by node and class\\ \\ \hline
- {\tt tree\_pred}&Obtain predicted class for new data using PPforest t.\\ \\ 
+ {\tt tree\_pred}&Obtain predicted class for new data using PPforest.\\ \\ 
    \hline
   \end{tabular}
   \end{table}
@@ -41,7 +41,7 @@ library(devtools)
 install_github("natydasilva/PPforest")
 library(PPforest)
 @
-Australian crab data set will be used as example across this manual. This data contains measurements on rock crabs of the genus Leptograpsus. There are 200 observations from two species (blue and orange) and for each specie (50 in each one) there are 50 males and 50 females. Class variable has 4 classes with the combinations of specie and sex (BlueMale, BlueFemale, OrangeMale and OrangeFemale). The data were collected on site at Fremantle, Western Australia. For each specimen, five measurements were made, using vernier calipers.
+Australian crab data set will be used as an example in this manual. This data contains measurements on rock crabs of the genus Leptograpsus. There are 200 observations from two species (blue and orange) and for each species (50 in each one) there are 50 males and 50 females. The class variable has 4 classes with the combinations of species and sex (BlueMale, BlueFemale, OrangeMale, and OrangeFemale). The data were collected on site at Fremantle, Western Australia. For each specimen, five measurements were made, using vernier calipers.
 
 \begin{itemize}
 \item FL the size of the frontal lobe length, in mm
@@ -51,7 +51,7 @@ Australian crab data set will be used as example across this manual. This data c
 \item BD depth of the body; for females, measured after displacement of the abdomen, in mm
 \end{itemize}
 
- A scatterplot matrix using \pkg{GGally} \citep{ggally} package is used to visualize crab data set presented in  Figure \ref{scatercrab}.  In this figure there is shows a strong, positive and linear association between the different variables. Also look like the classes can be separated by linear combinations of variables. This example is a case where PPforest outperforms the classic Random Forest because the linear projections in each node partitions thakes into account the correlation between variables.
+ A scatterplot matrix using \pkg{GGally} \citep{ggally} package is used to visualize crab data set presented in  Figure \ref{scatercrab}.  This figure shows a strong, positive and linear association between the different variables. Also look like the classes can be separated by linear combinations of variables. This example is a case where PPforest outperforms the classic Random Forest because of the linear projections in each node partitions takes into account the correlation between variables.
 
 << echo=FALSE, message=FALSE, warning=FALSE>>=
 require(PPforest)
@@ -79,11 +79,11 @@ a
 @
 \caption{Scatter plot matrix for crab data \label{scatercrab}}
 \end{figure}
-\pkg{PPforest} includes some data set that were used to test its predictive performance. The data sets included are summarized in Table \ref{datappf}.
+\pkg{PPforest} includes some data set that was used to test its predictive performance. The data sets included are summarized in Table. \ref{datappf}.
 
 \begin{center}
 \begin{table}[!hbpt]
- \caption{Summary of data included in \pkg{PPforest} package\label{datappf}}
+ \caption{Summary of data included in \pkg{PPforest} package\label{datappf}.}
 \begin{tabular}{ l | p{12cm} } \hline
 \textbf{Data} & \textbf{Description}\\ \hline
 {\tt crab} & Measurements on rock crabs of the genus Leptograpsus. \\ \\ \hline
@@ -106,7 +106,7 @@ a
 The main function of the package is called {\tt PPforest} which implements a projection pursuit random forest. Table \ref{ppforestfun} presents the {\tt PPforest} function arguments and their respective description.
   \begin{center}
  \begin{table}[!hbpt]
- \caption{Summary of available arguments of function {\tt PPforest} \label{ppforestfun}}
+ \caption{Summary of available arguments of function {\tt PPforest} \label{ppforestfun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt data}	& Data frame with the complete data set\\ \hline
@@ -131,7 +131,7 @@ Logical condition, if it is TRUE then parallelize the function\\ \hline
   
 {\tt PPforest} function runs a projection pursuit random forest. The arguments are a data frame with the data information, class with the name of the class variable argument.  {\tt size.tr} to specify the proportion of observations using in the training. Using this function we have the option to split the data in training and test using {\tt size.tr} directly. {\tt size.tr} is the proportion of data used in the training and the test proportion will be 1- {\tt size.tr}.
 The number of trees in the forest is specified using the argument {\tt m}. The argument {\tt size.p} is the sample proportion of the variables used in each node split, {\tt PPmethod} is the projection pursuit index to be optimized,  two options LDA and PDA are available.
-The algorithm can be parallelized specifing {\tt parallel =TRUE} and the number of used cores can be incuded in {\tt core} core argument.
+The algorithm can be parallelized specifying {\tt parallel =TRUE} and the number of used cores can be included in {\tt core} core argument.
 
 The following code is to run {\tt PPforest} using crab data, in this case all the observations available are used to run the forest ({\tt size.tr = 1}), the number of trees is 200 ( {\tt m= 200})  and the proportion of variables used in each node partitions is .5 ({\tt size.p = .5}) in this case 2 variables). The selected projection index is `LDA' ({\tt PPmethod = 'LDA'}) and the forest is parallelized ({\tt parallel = TRUE}) specifieng two cores ({\tt cores = 2}).
 
@@ -142,7 +142,7 @@ pprf.crab <- PPforest::PPforest(data = crab, class = "Type", size.tr = 1,
                                 parallel =TRUE, cores = 2)
 @
 
-{\tt PPforest} print a summary result from the model with the confusion matrix information and the oob-error rate in a similar way \pkg{randomForest} packages does to make them comparable. Based on confusion matrix, we can observe that the biggest error is for BlueMale class. Most of the wrong classified values are between BlueFemale and BlueMale.
+{\tt PPforest} print a summary result from the model with the confusion matrix information and the oob-error rate in a similar way \pkg{randomForest} packages does, these makes them comparable. Based on confusion matrix, we can observe that the biggest error is for BlueMale class. Most of the wrong classified values are between BlueFemale and BlueMale.
 
 <<echo=TRUE>>=
 pprf.crab
@@ -155,7 +155,7 @@ This function returns the predicted values of the training data, training error,
 @
 \begin{center}
  \begin{table}[!hbpt]
-\caption{Summary of available values of function {\tt PPforest} \label{ppforestout}}
+\caption{Summary of available values of function {\tt PPforest} \label{ppforestout}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Value} & \textbf{Description}\\ \hline
 {\tt prediction.training}	& Predicted values for training data se\\  \hline
@@ -179,11 +179,11 @@ This function returns the predicted values of the training data, training error,
   \end{center}
 
 \subsection{{\tt baggtree}}
-This function grow a projection pursuit tree for each bootstrap sample and random sample selection in each node partition.
+This function grows a projection pursuit tree for each bootstrap sample and random sample selection in each node partition.
 A summary of the arguments and a description for this function is presented in Table \ref{baggtreefun}.
  \begin{center}
  \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt baggtree} \label{baggtreefun}}
+ \caption{Summary of available arguments of function {\tt baggtree} \label{baggtreefun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt data} &	Data frame with the complete data set\\ \hline
@@ -201,7 +201,8 @@ A summary of the arguments and a description for this function is presented in T
 This function can be used directly but it is one of the main functions needed to run the forest. 
 <<echo=TRUE>>=
 crab.trees <- baggtree(data = crab, class = "Type",
-m =  200, PPmethod = 'LDA', lambda = .1, size.p = 0.5 , parallel = TRUE, cores = 2)
+m =  200, PPmethod = 'LDA', lambda = .1, size.p = 0.5 , parallel = TRUE,
+cores = 2)
 str(crab.trees[[1]], max.level = 1)
 
 @
@@ -212,7 +213,7 @@ This functions stucture data and contain useful information to visualize {\tt PP
 Table \ref{nodedatfun} contains a summary whit the main argument described for {\tt node\_data}.
  \begin{center}
  \begin{table}[!hbpt]
- \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}}
+ \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt ppf} &	Is a PPforest object\\ \hline
@@ -229,7 +230,7 @@ node_data(ppf = pprf.crab, tr = 1)  %>% head()
 
 \begin{center}
  \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatout}}
+ \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatout}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Value} & \textbf{Description}\\ \hline
 {\tt proj.data}	&Projected data for each node and class\\ \hline
@@ -242,7 +243,7 @@ node_data(ppf = pprf.crab, tr = 1)  %>% head()
   \end{table}
   \end{center}
 
-This function is usefull to visualize PPtree results because it makes available the projected information for each class and node. Figure \ref{densi} shows a density plot for tree 1 in the forest and for three nodes. For a further explanation about visualization for PPforest objects check \cite{da2017interactive}.
+This function is useful to visualize PPtree results because it makes available the projected information for each class and node. Figure \ref{densi} shows a density plot for tree 1 in the forest and for three nodes. For a further explanation about visualization for PPforest objects check \cite{da2017interactive}.
 \begin{figure}[!hbpt]
 << echo=TRUE, fig.height=4, fig.width=8, message=FALSE>>=
 dat_pl <- node_data(ppf = pprf.crab, tr = 1)
@@ -265,7 +266,7 @@ dat_pl %>%
 \caption{Visualizing the PPtree model of the crab data. The tree has three nodes (top). The density plots show the data projections at each node, colored by group (middle). The dashed vertical red line indicates the split value of each node. At node 1 the blue species is separated from orange species. Nodes 2 and 3 separate the sexes, which are more confused for the blue species.\label{densi}}
 \end{figure}
 
-Figure \ref{mos} shows an additionall visualization using the information from {\tt dats\_node} function. This figure is a mosaic plot for the confusion table for each split.
+Figure \ref{mos} shows an additional visualization using the information from {\tt dats\_node} function. This figure is a mosaic plot for the confusion table for each split.
 \begin{figure}[!hbpt]
 <<echo=TRUE, fig.height=4, fig.width=8, message=FALSE>>=
 dat_mosaic <-
@@ -293,7 +294,7 @@ p1
 A summary of available arguments and its description is presented in Table \ref{ppsplitfun}
  \begin{center}
  \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt PPtree\_split} \label{ppsplitfun}}
+ \caption{Summary of available arguments of function {\tt PPtree\_split} \label{ppsplitfun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt form} & 	A character with the name of the class variable\\ \hline
@@ -305,7 +306,7 @@ A summary of available arguments and its description is presented in Table \ref{
   \end{tabular}
   \end{table}
   \end{center}
-To run one tree with random variables selection an example using crab data is presented bellow. In this case LDA method is used and the number of varibles used in each node partition is also 2 ({\tt size.p =0.5}).
+To run one tree with random variables selection an example using crab data is presented bellow. In this case, LDA method is used and the number of variables used in each node partition is also 2 ({\tt size.p =0.5}).
 <<echo=TRUE>>=
 Tree.crab <-PPtree_split("Type~.", data = crab,
                                     PPmethod = "LDA", size.p = 0.5)
@@ -317,7 +318,7 @@ str(Tree.crab, max.level = TRUE)
 
  \begin{center}
  \begin{table}[!h]
-  \caption{Summary of output values of function {\tt PPtree\_split} \label{ppsplitfunout}}
+  \caption{Summary of output values of function {\tt PPtree\_split} \label{ppsplitfunout}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Values} & \textbf{Description}\\ \hline
 {\tt Tree.Struct} & 	Tree structure of projection pursuit classification tree\\ \hline
@@ -338,14 +339,15 @@ plot(Tree.crab, font.size = 12, width.size = .8)
 \caption{Tree structure plot using \pkg{PPtreeViz}}
 \end{figure}
 
+\newpage
 
 \subsection{{\tt PPclassify2}}
-This function predict the class for the test set and compute the predicted error rate from a PPtree object.
+This function predicts the class for the test set and compute the predicted error rate from a PPtree object.
 Table \ref{ppclassfun} shows a summary with the arguments for {\tt PPclassify2} function.
  
   \begin{center}
  \begin{table}[!h]
-  \caption{Summary of available arguments of function {\tt PPclassify2} \label{ppclassfun}}
+  \caption{Summary of available arguments of function {\tt PPclassify2} \label{ppclassfun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Argument} & \textbf{Description}\\ \hline
 {\tt Tree.result} &	The result of PP.Tree.\\ \hline
@@ -366,7 +368,7 @@ str(PPclassify2(Tree.crab))
 
  \begin{center}
  \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt trees\_pred} \label{nodedatfun}}
+ \caption{Summary of available arguments of function {\tt trees\_pred} \label{nodedatfun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt object}	 &Trees classifiers from trees\_pp function or PPforest object\\ \hline
@@ -383,21 +385,22 @@ str(PPclassify2(Tree.crab))
 <<echo = TRUE>>=
 crab.trees <- baggtree(data = crab, class = "Type", 
 m =  200, PPmethod = 'LDA', lambda = .1, size.p = 0.4 )
-pr <- trees_pred(  crab.trees, xnew = crab[, -1], parallel = FALSE, cores = 2)
+pr <- trees_pred(  crab.trees, xnew = crab[, -1], parallel = FALSE, 
+                   cores = 2)
 
 pprf.crab <- PPforest(data = crab, class = "Type",
- std = FALSE, size.tr = 2/3, m = 100, size.p = .4, PPmethod = 'LDA', parallel = TRUE )
+ std = FALSE, size.tr = 2/3, m = 100, size.p = .4, PPmethod = 'LDA',
+ parallel = TRUE )
  
 pred <- trees_pred(pprf.crab, xnew = pprf.crab$test, paralle = TRUE)
 
 @
-
 \subsection{{\tt ternary\_str}}
 This function returns a list with two elements need to plot a generalized ternary plot.
-Table \ref{ternafun} presents a summary with the available arguments for this function.
+Table \ref{ternafun} presents a summary of the available arguments for this function.
  \begin{center}
  \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt ternary} \label{ternafun}}
+ \caption{Summary of available arguments of function {\tt ternary\_str} \label{ternafun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt ppf}	&Is a PPforest object\\ \hline
@@ -408,7 +411,9 @@ Table \ref{ternafun} presents a summary with the available arguments for this fu
  \end{tabular}
   \end{table}
   \end{center}
-This example shows how to use the output from  {\tt ternary\_str} can be used to visualize a genaralized ternary plot using vote matrix information.
+This example shows how to use the output from  {\tt ternary\_str} can be used to visualize a generalized ternary plot using vote matrix information.
+This function returns a list with two elements need to plot a generalized ternary plot.
+Table \ref{ternafun} presents a summary of the available arguments for this function.
 \begin{figure}[!hbpt]
  <<echo=TRUE, fig.height=4, fig.width=8, message=FALSE>>=
 pl_ter <- function(dat, dx, dy ){
@@ -426,14 +431,16 @@ pl_ter <- function(dat, dx, dy ){
   p1
 }
 #ternary plot in tree different selected dierections
-p1 <- pl_ter(ternary_str(pprf.crab, id = c(1, 2, 3), sp = 3, dx = 1, dy = 2), 1, 2 )
-p2 <-  pl_ter(ternary_str(pprf.crab, id = c(1, 2, 3), sp = 3, dx = 1, dy = 3), 1, 3)
-p3 <-  pl_ter(ternary_str(pprf.crab, id = c(1, 2, 3), sp = 3, dx = 2, dy = 3), 2, 3)
+p1<-pl_ter(ternary_str(pprf.crab, id = c(1,2,3), sp = 3, dx = 1, dy = 2), 1, 2)
+p2<-pl_ter(ternary_str(pprf.crab, id = c(1,2,3), sp = 3, dx = 1, dy = 3), 1, 3)
+p3<-pl_ter(ternary_str(pprf.crab, id = c(1,2,3), sp = 3, dx = 2, dy = 3), 2, 3)
 gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
 
 @
 \caption{Generalized ternary plot ((G-1)-D simplex, here it is a tetrahedron) representation of the vote matrix for four classes. The tetrahedron is shown pairwise. Each point corresponds to one observation and color is the true class. This is close but not a perfect classification, since the colors are concentrated in the corners and there are some mixed colors in each corner. }
 \end{figure}
+\newpage
+
 \subsection{{\tt permute\_importance},  {\tt ppf\_avg\_pptree\_imp}  and {\tt ppf\_global\_imp}}
 {\tt permute\_importance}, {\tt ppf\_avg\_pptree\_imp}  and {\tt ppf\_global\_imp} are three functions to compute importance measures for PPforest objects.
 
@@ -459,6 +466,7 @@ All these measures can be ploted for example:
 impo <- permute_importance(ppf = pprf.crab) 
 ggplot(impo, aes(x = imp, y = nm)) + geom_point() 
 @
+\caption{Dot plot with the permuted importance measure for a PPforest object}
 \end{figure}
 
 
