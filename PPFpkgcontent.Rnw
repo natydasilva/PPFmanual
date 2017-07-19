@@ -14,7 +14,7 @@ Table \ref{tabfun} shows the complete list of functions included in the package 
 
  \begin{center}
  \begin{table}[!hbpt]
-  \caption{Summary of functions implemented in \pkg{PPforest}.\label{tabfun}}
+  \isucaption{Summary of functions implemented in \pkg{PPforest}.\label{tabfun}}
   \begin{tabular}{ l | p{12cm} } \hline
 \textbf{Function} &\textbf{Description} \\ \hline
  {\tt baggtree}&For each bootstrap sample grow a projection pursuit tree (PPtree object).\\ \\ \hline
@@ -77,13 +77,13 @@ a <- ggpairs(PPforest::crab,
 
 a
 @
-\caption{Scatter plot matrix for crab data \label{scatercrab}}
+\isucaption{Scatter plot matrix for crab data \label{scatercrab}}
 \end{figure}
 \pkg{PPforest} includes some data set that was used to test its predictive performance. The data sets included are summarized in Table. \ref{datappf}.
 
 \begin{center}
 \begin{table}[!hbpt]
- \caption{Summary of data included in \pkg{PPforest} package\label{datappf}.}
+ \isucaption{Summary of data included in \pkg{PPforest} package\label{datappf}.}
 \begin{tabular}{ l | p{12cm} } \hline
 \textbf{Data} & \textbf{Description}\\ \hline
 {\tt crab} & Measurements on rock crabs of the genus Leptograpsus. \\ \\ \hline
@@ -106,7 +106,7 @@ a
 The main function of the package is called {\tt PPforest} which implements a projection pursuit random forest. Table \ref{ppforestfun} presents the {\tt PPforest} function arguments and their respective description.
   \begin{center}
  \begin{table}[!hbpt]
- \caption{Summary of available arguments of function {\tt PPforest} \label{ppforestfun}.}
+ \isucaption{Summary of available arguments of function {\tt PPforest} \label{ppforestfun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt data}	& Data frame with the complete data set\\ \hline
@@ -155,7 +155,7 @@ This function returns the predicted values of the training data, training error,
 @
 \begin{center}
  \begin{table}[!hbpt]
-\caption{Summary of available values of function {\tt PPforest} \label{ppforestout}.}
+\isucaption{Summary of available values of function {\tt PPforest} \label{ppforestout}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Value} & \textbf{Description}\\ \hline
 {\tt prediction.training}	& Predicted values for training data se\\  \hline
@@ -182,8 +182,8 @@ This function returns the predicted values of the training data, training error,
 This function grows a projection pursuit tree for each bootstrap sample and random sample selection in each node partition.
 A summary of the arguments and a description for this function is presented in Table \ref{baggtreefun}.
  \begin{center}
- \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt baggtree} \label{baggtreefun}.}
+ \begin{table}[!ht]
+ \isucaption{Summary of available arguments of function {\tt baggtree} \label{baggtreefun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt data} &	Data frame with the complete data set\\ \hline
@@ -213,7 +213,7 @@ This functions stucture data and contain useful information to visualize {\tt PP
 Table \ref{nodedatfun} contains a summary whit the main argument described for {\tt node\_data}.
  \begin{center}
  \begin{table}[!hbpt]
- \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}.}
+ \isucaption{Summary of available arguments of function {\tt node\_data} \label{nodedatfun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt ppf} &	Is a PPforest object\\ \hline
@@ -229,8 +229,8 @@ node_data(ppf = pprf.crab, tr = 1)  %>% head()
 @
 
 \begin{center}
- \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt node\_data} \label{nodedatout}.}
+ \begin{table}[!ht]
+ \isucaption{Summary of available arguments of function {\tt node\_data} \label{nodedatout}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Value} & \textbf{Description}\\ \hline
 {\tt proj.data}	&Projected data for each node and class\\ \hline
@@ -252,7 +252,7 @@ myColors <- brewer.pal(
   dim( unique(pprf.crab$train[pprf.crab$class.var]))[1], "Dark2")
 names(myColors) <- levels(pprf.crab$train[pprf.crab$class.var][, 1])
 dat_pl$Class <- as.factor(dat_pl$Class)
-levels(dat_pl$Class) <-  levels(pprf.crab$train[pprf.crab$class.var][, 1])
+levels(dat_pl$Class) <-  levels(pprf.crab$train[pprf.crab$class.var][[ 1]])
 dat_pl %>%
   filter(node.id %in% unique(node.id)[nodes]) %>%
   ggplot(aes(  x = proj.data, group = Class, fill = Class )) +
@@ -263,7 +263,7 @@ dat_pl %>%
              linetype = "dashed",
              color = 2) + xlab("") + theme(legend.position = "bottom")
 @
-\caption{Visualizing the PPtree model of the crab data. The tree has three nodes (top). The density plots show the data projections at each node, colored by group (middle). The dashed vertical red line indicates the split value of each node. At node 1 the blue species is separated from orange species. Nodes 2 and 3 separate the sexes, which are more confused for the blue species.\label{densi}}
+\isucaption{Visualizing the PPtree model of the crab data. The tree has three nodes (top). The density plots show the data projections at each node, colored by group (middle). The dashed vertical red line indicates the split value of each node. At node 1 the blue species is separated from orange species. Nodes 2 and 3 separate the sexes, which are more confused for the blue species.\label{densi}}
 \end{figure}
 
 Figure \ref{mos} shows an additional visualization using the information from {\tt dats\_node} function. This figure is a mosaic plot for the confusion table for each split.
@@ -284,7 +284,7 @@ p1 <- dat_mosaic %>% filter(node.id %in% unique(node.id)[nodes]) %>%
   )
 p1
 @
-\caption{Mosaic plots of the confusion table for each split. Node 1 shows the clear split of the species, with a small number of misclassifications. Node 2 where orange females are separated from orange males indicates small number of misclassifications. Node 3 where blue females are separated from blue males, shows a larger misclassification than for orange specie.\label{mos}}
+\isucaption{Mosaic plots of the confusion table for each split. Node 1 shows the clear split of the species, with a small number of misclassifications. Node 2 where orange females are separated from orange males indicates small number of misclassifications. Node 3 where blue females are separated from blue males, shows a larger misclassification than for orange specie.\label{mos}}
 \end{figure}
 
 \newpage
@@ -293,8 +293,8 @@ p1
 {\tt PPtree\_split} function implements a projection pursuit classification tree with random variable selection in each split, based on the original PPtreeViz algorithm. This function returns a PPtreeclass object.
 A summary of available arguments and its description is presented in Table \ref{ppsplitfun}
  \begin{center}
- \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt PPtree\_split} \label{ppsplitfun}.}
+ \begin{table}[!ht]
+ \isucaption{Summary of available arguments of function {\tt PPtree\_split} \label{ppsplitfun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt form} & 	A character with the name of the class variable\\ \hline
@@ -317,8 +317,8 @@ str(Tree.crab, max.level = TRUE)
 @
 
  \begin{center}
- \begin{table}[!h]
-  \caption{Summary of output values of function {\tt PPtree\_split} \label{ppsplitfunout}.}
+ \begin{table}[!ht]
+  \isucaption{Summary of output values of function {\tt PPtree\_split} \label{ppsplitfunout}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Values} & \textbf{Description}\\ \hline
 {\tt Tree.Struct} & 	Tree structure of projection pursuit classification tree\\ \hline
@@ -336,7 +336,7 @@ Since {\tt Tree.crab} is a PPtreeclass object all the visualization in \pkg{PPtr
 library(PPtreeViz)
 plot(Tree.crab, font.size = 12, width.size = .8)
 @
-\caption{Tree structure plot using \pkg{PPtreeViz}}
+\isucaption{Tree structure plot using \pkg{PPtreeViz}}
 \end{figure}
 
 \newpage
@@ -346,8 +346,8 @@ This function predicts the class for the test set and compute the predicted erro
 Table \ref{ppclassfun} shows a summary with the arguments for {\tt PPclassify2} function.
  
   \begin{center}
- \begin{table}[!h]
-  \caption{Summary of available arguments of function {\tt PPclassify2} \label{ppclassfun}.}
+ \begin{table}[!ht]
+  \isucaption{Summary of available arguments of function {\tt PPclassify2} \label{ppclassfun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Argument} & \textbf{Description}\\ \hline
 {\tt Tree.result} &	The result of PP.Tree.\\ \hline
@@ -367,8 +367,8 @@ str(PPclassify2(Tree.crab))
 \subsection{{\tt trees\_pred}}
 
  \begin{center}
- \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt trees\_pred} \label{nodedatfun}.}
+ \begin{table}[!ht]
+ \isucaption{Summary of available arguments of function {\tt trees\_pred} \label{nodedatfun1}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt object}	 &Trees classifiers from trees\_pp function or PPforest object\\ \hline
@@ -399,8 +399,8 @@ pred <- trees_pred(pprf.crab, xnew = pprf.crab$test, paralle = TRUE)
 This function returns a list with two elements need to plot a generalized ternary plot.
 Table \ref{ternafun} presents a summary of the available arguments for this function.
  \begin{center}
- \begin{table}[!h]
- \caption{Summary of available arguments of function {\tt ternary\_str} \label{ternafun}.}
+ \begin{table}[!ht]
+ \isucaption{Summary of available arguments of function {\tt ternary\_str} \label{ternafun}.}
   \begin{tabular}{ l | p{12cm} } \hline
   \textbf{Arguments} & \textbf{Description}\\ \hline
 {\tt ppf}	&Is a PPforest object\\ \hline
@@ -437,7 +437,7 @@ p3<-pl_ter(ternary_str(pprf.crab, id = c(1,2,3), sp = 3, dx = 2, dy = 3), 2, 3)
 gridExtra::grid.arrange(p1, p2, p3, ncol = 3)
 
 @
-\caption{Generalized ternary plot ((G-1)-D simplex, here it is a tetrahedron) representation of the vote matrix for four classes. The tetrahedron is shown pairwise. Each point corresponds to one observation and color is the true class. This is close but not a perfect classification, since the colors are concentrated in the corners and there are some mixed colors in each corner. }
+\isucaption{Generalized ternary plot ((G-1)-D simplex, here it is a tetrahedron) representation of the vote matrix for four classes. The tetrahedron is shown pairwise. Each point corresponds to one observation and color is the true class. This is close but not a perfect classification, since the colors are concentrated in the corners and there are some mixed colors in each corner. }
 \end{figure}
 \newpage
 
@@ -466,7 +466,7 @@ All these measures can be ploted for example:
 impo <- permute_importance(ppf = pprf.crab) 
 ggplot(impo, aes(x = imp, y = nm)) + geom_point() 
 @
-\caption{Dot plot with the permuted importance measure for a PPforest object}
+\isucaption{Dot plot with the permuted importance measure for a PPforest object}
 \end{figure}
 
 
